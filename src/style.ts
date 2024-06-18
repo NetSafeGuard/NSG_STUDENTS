@@ -98,3 +98,22 @@ export const Credits = styled.div`
     color: #333;
     opacity: 0.5;
 `;
+
+export const iframe = styled.iframe`
+    width: 100vw;
+    height: calc(100vh - 32px);
+`;
+
+export const ProtectedCredits = styled.div`
+    position: fixed;
+    top: 40px;
+    left: 10px;
+    font-size: 12px;
+    color: #333;
+    opacity: 0.5;
+`;
+
+export const ProtectedImg = styled.img`
+    width: 120px;
+    opacity: 0.5;
+`;

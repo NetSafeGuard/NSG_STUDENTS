@@ -8,6 +8,8 @@ import { getSocket } from './services/socket.ts';
 import type { Socket } from 'socket.io-client';
 import { Loading } from './components/loading/index.tsx';
 import { toast } from 'sonner';
+import Credits from './assets/credits.png';
+import { AlertPage } from './components/alert/index.tsx';
 
 interface LoginData {
 	usercode: string;
@@ -29,6 +31,7 @@ const App = () => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [activity, setActivity] = useState<Activity | null>(null);
+	const [alert,setAlert] = useState<boolean>(true);
 
 	useEffect(() => {
 		const setupSocket = async () => {
@@ -44,7 +47,6 @@ const App = () => {
 			setIsConnected(true);
 			socket.on('joined', activity => {
 				setActivity(activity);
-        window.location.href = activity.redirectUrl;
 			});
 		}
 	}, [socket]);
@@ -73,10 +75,15 @@ const App = () => {
 		return <Loading />;
 	}
 
+	if (alert) return <AlertPage />;
+
 	if (activity)
 		return (
 			<C.Container>
-				<h1>...</h1>
+				<C.iframe src={activity.redirectUrl} title={activity.title} width={'100vw'} />
+				<C.ProtectedCredits>
+					<C.ProtectedImg src={Credits} alt="Credits" />
+				</C.ProtectedCredits>
 			</C.Container>
 		);
 
