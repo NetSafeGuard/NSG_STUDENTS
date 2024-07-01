@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<>
 		<TitleBar />
-    <Toaster />
+    	<Toaster />
 		<App />
 	</>,
 );

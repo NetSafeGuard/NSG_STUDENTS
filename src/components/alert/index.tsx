@@ -1,19 +1,15 @@
 import * as C from './style';
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import Netsafe from '../../assets/netsafe-png.png';
 
 export const AlertPage = () => {
 	return (
 		<C.Container>
-			<Alert variant="default" style={{ width: '50%', height: '100px' }}>
-				<ExclamationTriangleIcon className="h-4 w-4" />
-				<AlertTitle>Alerta</AlertTitle>
-				<AlertDescription>
-					{' '}
-					Parece que foi detetada uma ação suspeita durante a realização da sua atividade.
-				</AlertDescription>
-			</Alert>
+			<C.image src={Netsafe} />
+			<C.WarnTitle>Atividade Pausada</C.WarnTitle>
+			<C.WarnDescription>
+				Parece que foi detetada uma ação suspeita durante a realização da sua atividade.
+			</C.WarnDescription>
+			<C.Bottom>Aguarde o contacto do responsável pela a atividade.</C.Bottom>
 		</C.Container>
 	);
 };

@@ -31,7 +31,7 @@ const App = () => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [activity, setActivity] = useState<Activity | null>(null);
-	const [alert,setAlert] = useState<boolean>(true);
+	const [alert,setAlert] = useState<boolean>(false);
 
 	useEffect(() => {
 		const setupSocket = async () => {
