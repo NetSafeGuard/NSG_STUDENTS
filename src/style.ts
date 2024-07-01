@@ -117,3 +117,21 @@ export const ProtectedImg = styled.img`
     width: 120px;
     opacity: 0.5;
 `;
+
+export const BlockMeButton = styled.button`
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: #015593;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+
+    transition: background-color 0.5s;
+    &:hover {
+        background-color: #016593;
+    }
+`;

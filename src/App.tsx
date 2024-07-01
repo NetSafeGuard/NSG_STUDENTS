@@ -31,7 +31,7 @@ const App = () => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [activity, setActivity] = useState<Activity | null>(null);
-	const [alert,setAlert] = useState<boolean>(false);
+	const [alert, setAlert] = useState<boolean>(false);
 
 	useEffect(() => {
 		const setupSocket = async () => {
@@ -48,6 +48,14 @@ const App = () => {
 			socket.on('joined', activity => {
 				setActivity(activity);
 			});
+
+			socket.on('blocked', () => {
+				setAlert(true);
+			});
+
+			socket.on('unblocked', () => {
+				setAlert(false);
+			});
 		}
 	}, [socket]);
 
@@ -58,6 +66,12 @@ const App = () => {
 
 	const Login = (data: LoginData) => {
 		socket!.emit('joinActivity', data, (error: string) => {
+			if (error) toast.error('Erro', { description: error });
+		});
+	};
+
+	const handleBlock = () => {
+		socket!.emit('BlockMe', (error: string) => {
 			if (error) toast.error('Erro', { description: error });
 		});
 	};
@@ -81,6 +95,7 @@ const App = () => {
 		return (
 			<C.Container>
 				<C.iframe src={activity.redirectUrl} title={activity.title} width={'100vw'} />
+				<C.BlockMeButton onClick={handleBlock}>Block me</C.BlockMeButton>
 				<C.ProtectedCredits>
 					<C.ProtectedImg src={Credits} alt="Credits" />
 				</C.ProtectedCredits>
