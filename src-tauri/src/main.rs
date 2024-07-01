@@ -14,7 +14,7 @@ mod tls;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-async fn setup(
+async fn start_capture(
     window: tauri::Window
 ) -> Result<(), ()> {
 
@@ -27,7 +27,7 @@ async fn setup(
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![start_capture])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
