@@ -8,7 +8,7 @@ import { getSocket } from '../../services/socket.ts';
 import type { Socket } from 'socket.io-client';
 import { Loading } from '../../components/loading/index.tsx';
 import { toast } from 'sonner';
-import Credits from './assets/credits.png';
+import Credits from '../../assets/credits.png';
 import { AlertPage } from '../../components/alert/index.tsx';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
