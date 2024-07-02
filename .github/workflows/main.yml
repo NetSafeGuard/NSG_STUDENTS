@@ -53,9 +53,9 @@ jobs:
         run: |
           npm install
 
-      - name: Install NPCAP
+      - name: Install NMAP
         run: |
-          choco install npcap -y
+          choco install nmap -y
 
       - name: Build frontend
         run: |
