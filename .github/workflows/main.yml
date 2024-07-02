@@ -53,10 +53,6 @@ jobs:
         run: |
           npm install
 
-      - name: Install NMAP
-        run: |
-          choco install nmap -y
-
       - name: Build frontend
         run: |
           npm run build
