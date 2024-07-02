@@ -48,6 +48,17 @@
     "security": {
       "csp": null
     },
+    "updater": {
+      "active": true,
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlFQkU4Qzg0ODhGMzA3REEKUldUYUIvT0loSXkrbnJQbmR2ZVVCUjJPcnIweVRqUVhVUDRmeEZ5SEVBQ0UrNkd2c3Y5LzQzbGUK",
+      "endpoints": [
+        "https://api.netsafeguard.cloud/api/v1/update/students?current_version={{current_version}}&target={{target}}&arch={{arch}}"
+      ],
+      "windows": {
+        "installMode": "basicUi"
+      }
+    },
     "windows": [
          {
            "fullscreen": false,

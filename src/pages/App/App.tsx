@@ -2,14 +2,14 @@ import * as C from './style.ts';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Error } from './components/error/index.tsx';
+import { Error } from '../../components/error/index.tsx';
 import { useEffect, useState } from 'react';
-import { getSocket } from './services/socket.ts';
+import { getSocket } from '../../services/socket.ts';
 import type { Socket } from 'socket.io-client';
-import { Loading } from './components/loading/index.tsx';
+import { Loading } from '../../components/loading/index.tsx';
 import { toast } from 'sonner';
 import Credits from './assets/credits.png';
-import { AlertPage } from './components/alert/index.tsx';
+import { AlertPage } from '../../components/alert/index.tsx';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/tauri';
 
@@ -29,7 +29,7 @@ interface Activity {
 	id?: number;
 }
 
-const App = () => {
+export const App = () => {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [activity, setActivity] = useState<Activity | null>(null);
@@ -42,7 +42,6 @@ const App = () => {
 		};
 
 		setupSocket();
-
 	}, []);
 
 	useEffect(() => {
@@ -159,5 +158,3 @@ const App = () => {
 		</>
 	);
 };
-
-export default App;
