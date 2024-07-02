@@ -10,6 +10,8 @@ import { Loading } from './components/loading/index.tsx';
 import { toast } from 'sonner';
 import Credits from './assets/credits.png';
 import { AlertPage } from './components/alert/index.tsx';
+import { listen } from '@tauri-apps/api/event';
+import { invoke } from '@tauri-apps/api/tauri';
 
 interface LoginData {
 	usercode: string;
@@ -40,6 +42,7 @@ const App = () => {
 		};
 
 		setupSocket();
+
 	}, []);
 
 	useEffect(() => {
@@ -47,6 +50,18 @@ const App = () => {
 			setIsConnected(true);
 			socket.on('joined', activity => {
 				setActivity(activity);
+				invoke('start_capture');
+
+				const unlisten = listen('suspicious', () => {
+					console.log(alert);
+					if (alert) return;
+
+					handleBlock();
+				});
+
+				return () => {
+					unlisten.then(fn => fn());
+				};
 			});
 
 			socket.on('blocked', () => {

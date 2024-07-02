@@ -19,8 +19,8 @@ async fn start_capture(
 ) -> Result<(), ()> {
 
     std::thread::sleep(std::time::Duration::from_secs(1));
-    window.emit("test","Capturing...").unwrap();
     interface::process_all_interfaces(window);
+    println!("Capture started");
 
     Ok(())  
 }
