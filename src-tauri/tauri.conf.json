@@ -38,7 +38,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "students.netsafeguard.developers",
       "icon": [
         "icons/32x32.png",
         "icons/icon.icns",
