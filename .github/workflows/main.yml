@@ -53,6 +53,10 @@ jobs:
         run: |
           npm install
 
+      - name: Install Winpcap
+        run: |
+          choco install winpcap -y
+
       - name: Build frontend
         run: |
           npm run build
