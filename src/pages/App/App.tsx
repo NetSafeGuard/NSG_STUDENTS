@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Error } from '../../components/error/index.tsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getSocket } from '../../services/socket.ts';
 import type { Socket } from 'socket.io-client';
 import { Loading } from '../../components/loading/index.tsx';
@@ -34,6 +34,7 @@ export const App = () => {
 	const [isConnected, setIsConnected] = useState<boolean>(false);
 	const [activity, setActivity] = useState<Activity | null>(null);
 	const [alert, setAlert] = useState<boolean>(false);
+	const alertRef = useRef(alert);
 
 	useEffect(() => {
 		const setupSocket = async () => {
@@ -43,6 +44,10 @@ export const App = () => {
 
 		setupSocket();
 	}, []);
+	
+	useEffect(() => {
+		alertRef.current = alert;
+	}, [alert]);
 
 	useEffect(() => {
 		if (socket) {
@@ -52,8 +57,8 @@ export const App = () => {
 				invoke('start_capture');
 
 				const unlisten = listen('suspicious', () => {
-					console.log(alert);
-					if (alert) return;
+					if (alertRef.current) return;
+					alertRef.current = true;
 
 					handleBlock();
 				});

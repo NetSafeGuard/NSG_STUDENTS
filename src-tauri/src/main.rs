@@ -1,28 +1,26 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-#[macro_use]
-extern crate log;
-extern crate clap;
-extern crate pcap_parser;
-extern crate pnet;
 
-mod common;
-mod interface;
-mod pcap;
-mod tls;
+use std::sync::{Arc, Mutex};
+use std::thread;
+mod packet_capture;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 async fn start_capture(
     window: tauri::Window
 ) -> Result<(), ()> {
+    let captured_domains: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+    let captured_domains_clone = captured_domains.clone();
 
     std::thread::sleep(std::time::Duration::from_secs(1));
-    interface::process_all_interfaces(window);
+    thread::spawn(move || {
+        packet_capture::run_packet_capture(captured_domains_clone, window);
+    });
+
     println!("Capture started");
 
-    Ok(())  
+    Ok(())
 }
 
 fn main() {
