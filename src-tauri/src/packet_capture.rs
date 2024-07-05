@@ -1,5 +1,5 @@
 use pnet::datalink::{self, Channel::Ethernet};
-use pnet::packet::ethernet::{EtherTypes, EthernetPacket};
+use pnet::packet::ethernet::EthernetPacket;
 use pnet::packet::{ipv4::Ipv4Packet, udp::UdpPacket, Packet};
 use std::collections::{HashMap, HashSet};
 use std::str;
@@ -7,7 +7,6 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::{Duration, Instant};
 
-// Função para extrair o domínio raiz
 fn extract_root_domain(domain: &str) -> String {
     let parts: Vec<&str> = domain.split('.').collect();
     if parts.len() > 2 {
@@ -17,23 +16,13 @@ fn extract_root_domain(domain: &str) -> String {
     }
 }
 
-pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Window) {
-    thread::sleep(Duration::from_secs(5));
-
-    let interfaces = datalink::interfaces();
-    for iface in &interfaces {
-        println!("Nome da Interface de Rede: {}", iface.name);
-    }
-
-    let interface_name = interfaces[0].name.clone();
-
-    let interface = interfaces
-        .iter()
-        .find(|iface| iface.name == interface_name)
-        .expect("Interface não encontrada");
-
-    let (_tx, mut rx) = match datalink::channel(&interface, Default::default()) {
-        Ok(Ethernet(tx, rx)) => (tx, rx),
+fn capture_traffic(
+    interface: pnet::datalink::NetworkInterface,
+    domains: Arc<Mutex<Vec<String>>>,
+    window: tauri::Window,
+) {
+    let mut rx = match datalink::channel(&interface, Default::default()) {
+        Ok(Ethernet(_, rx)) => rx,
         Ok(_) => panic!("Tipo de canal não tratado"),
         Err(e) => panic!("Falha ao criar canal: {}", e),
     };
@@ -77,14 +66,21 @@ pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Windo
         "jsdelivr.net",
         "clarify-ms",
         "google.pt",
-        "withgoogle.com"
+        "withgoogle.com",
+        "opera-api2.com",
+        "office.net",
+        "office365.com",
+        "office365.net",
+        "office365.pt",
+        "opera.com",
+        "operacdn.com",
     ];
 
     loop {
         match rx.next() {
             Ok(packet) => {
                 if let Some(eth) = EthernetPacket::new(packet) {
-                    if eth.get_ethertype() == EtherTypes::Ipv4 {
+                    if eth.get_ethertype() == pnet::packet::ethernet::EtherTypes::Ipv4 {
                         if let Some(ipv4) = Ipv4Packet::new(eth.payload()) {
                             if ipv4.get_next_level_protocol()
                                 == pnet::packet::ip::IpNextHeaderProtocols::Udp
@@ -93,8 +89,9 @@ pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Windo
                                     if udp.get_destination() == 53 {
                                         let dns_payload = udp.payload();
                                         if dns_payload.len() >= 5 {
-                                            let qdcount = (dns_payload[4] as usize) << 8
-                                                | (dns_payload[5] as usize);
+                                            let qdcount = ((dns_payload[4] as u16) << 8
+                                                | dns_payload[5] as u16)
+                                                as usize;
                                             let mut offset = 12;
 
                                             for _ in 0..qdcount {
@@ -111,7 +108,6 @@ pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Windo
                                                         &dns_payload[offset..offset + label_len],
                                                     )
                                                     .unwrap_or("<inválido>");
-
                                                     offset += label_len;
                                                     label_len = dns_payload[offset] as usize;
                                                     offset += 1;
@@ -160,5 +156,31 @@ pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Windo
             }
             Err(e) => eprintln!("Erro ao capturar pacote: {}", e),
         }
+    }
+}
+
+pub fn run_packet_capture(domains: Arc<Mutex<Vec<String>>>, window: tauri::Window) {
+    thread::sleep(Duration::from_secs(5));
+
+    let interfaces = datalink::interfaces();
+    for iface in &interfaces {
+        println!("Nome da Interface de Rede: {}", iface.name);
+    }
+
+    let mut handles = vec![];
+
+    for interface in interfaces {
+        let domains = Arc::clone(&domains);
+        let window = window.clone();
+
+        let handle = thread::spawn(move || {
+            capture_traffic(interface, domains, window);
+        });
+
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
     }
 }

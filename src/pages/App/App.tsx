@@ -114,7 +114,6 @@ export const App = () => {
 		return (
 			<C.Container>
 				<C.iframe src={activity.redirectUrl} title={activity.title} width={'100vw'} />
-				<C.BlockMeButton onClick={handleBlock}>Block me</C.BlockMeButton>
 				<C.ProtectedCredits>
 					<C.ProtectedImg src={Credits} alt="Credits" />
 				</C.ProtectedCredits>
